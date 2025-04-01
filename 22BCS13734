@@ -1,0 +1,211 @@
+Consider a function public String matchFound(String input 1, String input 2), where
+● input1 will contain only a single word with only 1 character replaces by an underscore ‘_’
+● input2 will contain a series of words separated by colons and no space character in between
+● input2 will not contain any other special character other than underscore and alphabetic characters.
+The methods should return output in a String type variable “output1” which contains all the words from input2 separated by colon which matches with input 1. All words in output1 should be in uppercase.
+
+solution:
+public String matchFound(String input1, String input2) {
+    StringBuilder output1 = new StringBuilder();
+    char missingChar = input1.charAt(0); // Assuming underscore is at index 0
+    int underscoreIndex = input1.indexOf('_');
+
+    // Generate all possible words by replacing the underscore with each character in input2
+    String[] words = input2.split(":");
+    for (String word : words) {
+        if (word.length() == input1.length()) {
+            // Check if the word matches when replacing the underscore
+            boolean match = true;
+            for (int i = 0; i < input1.length(); i++) {
+                if (input1.charAt(i) != '_' && input1.charAt(i) != word.charAt(i)) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                if (output1.length() > 0) output1.append(":");
+                output1.append(word.toUpperCase());
+            }
+        }
+    }
+    return output1.toString();
+}
+question 2
+Encoding Three Strings: Anand was assigned the task of coming up with an encoding mechanism for any given three strings.He has come up with the following plan.
+Step ONE :- Given any three strings,break each string into 3 parts each.
+For example- if the three strings are below:
+Input 1: “John”
+Input 2: “Johny”
+Input 3 : “Janardhan”
+“John” should be split into”J”,”oh”,”n,” as the FRONT ,MIDDLE and END part repectivly.
+“Johny” should be spilt into “jo”,” h”, “ny” as the FRONT ,MIDDLE and END respectively.
+“Janardhan” should be split into “Jan” ,” ard” ,”han” as the FRONT ,MIDDLE and END part respectively.
+i.e. If the no. of characters in the string are in multiples of 3 ,then each split –part will contain equal no of characters , as seen in the example of “Janadhan”.
+If the no. of characters in the string are NOT in multiples of 3 ,and if there is one character more than multiple of 3, then the middle part will get the extra character ,as seen in the example of “john”.
+If the no. of characters in the string are Not in multiples of 3 and if there are two characters more than multiple of 3, then the FRONT and END parts will get one extra character each, as seen in the example of “Johny”.
+Step TWO : Concatenate (join) the FRONT ,MIDDLE and END parts of the string as per the below specified concatenation – rule to from three Output strings.
+Output 1: FRONT part of input 1 + MIDDLE part of input 2 +END part of input 3
+Output2:- MIDDLE part of input1+ END part of input2 + FRONT part of input3
+Output3: END part of the input1+FRONT part of input2 +MIDDLE part of input3
+For example , for the above example input strings:
+Output1 = “J” +”h”+han”=”jhhan”
+Output2 =”oh”+”ny”+”Jan”=”ohnyjan”
+Output3=”n”+Jo”+ard”+=“njoard”
+Step THREE :-
+Process the resulting output strings based on the output-processing rule .After the above two steps, we will now have three output strings. Further processing is required only for the third output string as per below rule-
+“Toggle the case of each character in the string “ ,i.e. in the third output string, all lower-case characters should be made upper-case and vice versa.
+For example , for the above example strings ,output3 is “nJoard”, so after applying the toggle rule. Output3 should become “NjOARD”.
+Final Result – The three output strings after applying the above three steps i.e. for the above example .
+Output1 =”Jnhan”
+Output2=”ohnyJan’
+Output3 = “NJOARD”
+Help Anand to write a program that would do the above.
+solution:
+public String[] encodeStrings(String s1, String s2, String s3) {
+    String[] parts1 = splitString(s1);
+    String[] parts2 = splitString(s2);
+    String[] parts3 = splitString(s3);
+
+    String output1 = parts1[0] + parts2[1] + parts3[2];
+    String output2 = parts2[0] + parts3[1] + parts1[2];
+    String output3 = toggleCase(parts1[2] + parts2[0] + parts3[1]);
+
+    return new String[]{output1, output2, output3};
+}
+
+private String[] splitString(String s) {
+    int len = s.length();
+    int partSize = len / 3;
+    int remainder = len % 3;
+
+    int frontSize = partSize + (remainder > 0 ? 1 : 0);
+    int middleSize = partSize + (remainder == 2 ? 1 : 0);
+    int endSize = len - frontSize - middleSize;
+
+    return new String[]{
+        s.substring(0, frontSize),
+        s.substring(frontSize, frontSize + middleSize),
+        s.substring(frontSize + middleSize)
+    };
+}
+
+private String toggleCase(String s) {
+    StringBuilder sb = new StringBuilder();
+    for (char c : s.toCharArray()) {
+        sb.append(Character.isUpperCase(c) ? Character.toLowerCase(c) : Character.toUpperCase(c));
+    }
+    return sb.toString();
+}
+Problem 3:
+ 
+Given a String (In Uppercase alphabets or Lowercase alphabets), new alphabets is to be appended with following rule:
+(i) If the alphabet is present in the input string, use the numeric value of that alphabet.
+E.g. a or A numeric value is 1 and so on. New alphabet to be appended between 2 alphabets:
+(a) If (sum of numeric value of 2 alphabets) %26 is 0, then append 0.
+E.g. string is ay. Numeric value of a is 1, y is 25. Sum is 26. Remainder is 0, the new string will be a0y.
+(b) Otherwise (sum of numeric value of 2 alphabets) %26 numeric value alphabet is to be appended. E.g. ac is string. Numeric value of a is 1, c is 3, sum is 4. Remainder with 26 is 4. Alphabet to be appended is d. output will be adc.
+(ii) If a digit is present, it will be the same in the output string. E.g. string is 12, output string is 12.
+(iii) If only a single alphabet is present, it will be the same in the output string. E.g. input string is 1a, output will be 1a.
+(iv) If space is present, it will be the same in the output string. E.g. string is ac 12a, output will be adc 12a.
+ 
+Constraint: Whether string alphabets are In Uppercase or Lowercase, appended alphabets must be in lower case. Output string must also be in lowercase.
+solution:
+public String appendNewAlphabets(String input) {
+    StringBuilder output = new StringBuilder();
+    int length = input.length();
+
+    for (int i = 0; i < length; i++) {
+        char current = input.charAt(i);
+        output.append(current);
+
+        if (i < length - 1) {
+            char next = input.charAt(i + 1);
+
+            if (Character.isLetter(current) && Character.isLetter(next)) {
+                int sum = getNumericValue(current) + getNumericValue(next);
+                int remainder = sum % 26;
+
+                if (remainder == 0) {
+                    output.append('0');
+                } else {
+                    output.append((char) ('a' + remainder - 1)); // Adjust for 1-based index
+                }
+            }
+        }
+    }
+    return output.toString();
+}
+
+private int getNumericValue(char c) {
+    return Character.toLowerCase(c) - 'a' + 1;
+}
+Problem 4:
+ 
+String t is generated by random shuffling string s and then add one more letter at a random position.
+Return the letter that was added to t.
+
+Hint:
+
+Input: s = "abcd", t = "abcde"
+
+Output: "e"
+solution:
+public char findTheAddedLetter(String s, String t) {
+    int sumS = 0, sumT = 0;
+
+    // Sum the ASCII values of both strings
+    for (char c : s.toCharArray()) {
+        sumS += c;
+    }
+    for (char c : t.toCharArray()) {
+        sumT += c;
+    }
+
+    // The added letter is the difference between the sums
+    return (char) (sumT - sumS);
+}
+ 
+Problem 5:
+ 
+The next greater element of some element x in an array is the first greater element that is to the right of x in the same array.
+You are given two distinct 0-indexed integer arrays nums1 and nums2, where nums1 is a subset of nums2.
+For each 0 <= i < nums1.length, find the index j such that nums1[i] == nums2[j] and determine the next greater element of nums2[j] in nums2. If there is no next greater element, then the answer for this query is -1.
+Return an array ans of length nums1.length such that ans[i] is the next greater element as described above.
+ Hint:
+Input: nums1 = [4,1,2], nums2 = [1,3,4,2]
+Output: [-1,3,-1]
+Explanation: The next greater element for each value of nums1 is as follows:
+- 4 is underlined in nums2 = [1,3,4,2]. There is no next greater element, so the answer is -1.
+- 1 is underlined in nums2 = [1,3,4,2]. The next greater element is 3.
+- 2 is underlined in nums2 = [1,3,4,2]. There is no next greater element, so the answer is -1.
+solution:
+import java.util.*;
+
+public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+    Map<Integer, Integer> nextGreaterMap = new HashMap<>();
+    Deque<Integer> stack = new ArrayDeque<>();
+
+    // Step 1: Preprocess nums2
+    for (int i = nums2.length - 1; i >= 0; i--) {
+        int current = nums2[i];
+
+        // Pop elements smaller than current
+        while (!stack.isEmpty() && stack.peek() <= current) {
+            stack.pop();
+        }
+
+        // If stack is not empty, the top is the next greater element
+        nextGreaterMap.put(current, stack.isEmpty() ? -1 : stack.peek());
+
+        // Push current element to stack
+        stack.push(current);
+    }
+
+    // Step 2: Query for each element in nums1
+    int[] result = new int[nums1.length];
+    for (int i = 0; i < nums1.length; i++) {
+        result[i] = nextGreaterMap.get(nums1[i]);
+    }
+
+    return result;
+}
